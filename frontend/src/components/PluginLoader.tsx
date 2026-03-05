@@ -1,13 +1,14 @@
 import { lazy, Suspense, useMemo } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
+import { PluginMeta } from "@/types";
 
 export default function PluginLoader() {
   const { "*": splat } = useParams();
-  const plugins = useAuthStore((state) => state.plugins);
+  const plugins = useAuthStore((state: any) => state.plugins) as PluginMeta[];
 
   // 根据当前 URL 路径查找对应的插件信息
-  const currentPlugin = plugins.find((p) => {
+  const currentPlugin = plugins.find((p: PluginMeta) => {
     // splat 就是路由中的 /plugins/ 之后的部分
     return splat && `/${splat}`.startsWith(p.route_path);
   });
@@ -16,8 +17,6 @@ export default function PluginLoader() {
   const PluginComponent = useMemo(() => {
     if (!currentPlugin) return null;
     
-    // 这里使用 Vite 的 eager glob/lazy 或直接按路径字符串 import()
-    // 注意：Vite 要求动态 import() 的路径有明确的目录前缀和扩展名后缀，以支持静态分析
     return lazy(() => 
       import(`../plugins/${currentPlugin.frontend_component}.tsx`)
         .catch(() => ({ 

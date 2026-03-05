@@ -7,8 +7,8 @@ export default function HelloWorld() {
   useEffect(() => {
     api
       .get("/plugins/hello/ping")
-      .then((res) => setMessage(res.data.message))
-      .catch((err) => setMessage("Failed to load message: " + err.message));
+      .then((res: any) => setMessage(res.data.message))
+      .catch((err: any) => setMessage("Failed to load message: " + err.message));
   }, []);
 
   return (

@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate, Link, useLocation } from "react-router-dom";
 import { LogOut, Box, Menu } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { PluginMeta } from "@/types";
 
 export default function DashboardLayout() {
   const { user, plugins, logout } = useAuthStore();
-  const navigate = useNavigate();
   const location = useLocation();
 
   if (!user) {
@@ -39,7 +39,7 @@ export default function DashboardLayout() {
               我的插件
             </p>
           </div>
-          {plugins.map((plugin) => (
+          {plugins.map((plugin: PluginMeta) => (
             <Link
               key={plugin.name}
               to={`/plugins${plugin.route_path}`}
@@ -83,7 +83,7 @@ export default function DashboardLayout() {
       <main className="flex-1 flex flex-col overflow-hidden">
         <header className="h-16 border-b border-slate-200 bg-white flex items-center px-8 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-800">
-            {location.pathname === "/" ? "仪表盘" : plugins.find(p => `/plugins${p.route_path}` === location.pathname)?.display_name || "应用"}
+            {location.pathname === "/" ? "仪表盘" : plugins.find((p: PluginMeta) => `/plugins${p.route_path}` === location.pathname)?.display_name || "应用"}
           </h2>
         </header>
         <div className="flex-1 overflow-auto p-8">

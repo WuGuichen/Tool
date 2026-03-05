@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -9,7 +9,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import PluginLoader from "@/components/PluginLoader";
 
 // Auth Guard Component
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, initialized } = useAuthStore();
   
   if (!initialized) {
