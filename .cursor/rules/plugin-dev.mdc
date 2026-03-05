@@ -1,0 +1,60 @@
+---
+description: 网页工具箱插件开发规范
+globs: backend/app/plugins/**/*.py, frontend/src/plugins/**/*.tsx
+---
+# 网页工具箱插件开发指南
+
+当你被要求“创建一个新插件”或“开发一个工具”时，请严格遵守以下前后端规范。
+
+## 1. 后端规范 (FastAPI)
+- **目录**: `backend/app/plugins/`
+- **命名**: 使用下划线命名法，如 `my_tool.py`
+- **内容要求**:
+  - 必须导出一个 `APIRouter` 实例，命名为 `router`。
+  - 必须定义一个字典 `PLUGIN_META`，包含 `name`, `display_name`, `description`, `route_path`, `frontend_component`, `icon`。
+  - 路由定义直接使用 `@router.get("/")` 等，外层加载器会自动附加 `/api/plugins{route_path}` 前缀。
+
+示例：
+```python
+from fastapi import APIRouter
+
+router = APIRouter()
+
+PLUGIN_META = {
+    "name": "my_tool",
+    "display_name": "我的工具",
+    "description": "工具描述",
+    "route_path": "/my-tool",
+    "frontend_component": "MyTool",
+    "icon": "🔧"
+}
+
+@router.get("/data")
+async def get_data():
+    return {"status": "ok"}
+```
+
+## 2. 前端规范 (React)
+- **目录**: `frontend/src/plugins/`
+- **命名**: 必须与后端 `PLUGIN_META` 中的 `frontend_component` 一致，使用 PascalCase，如 `MyTool.tsx`
+- **内容要求**:
+  - 必须 `export default function MyTool() { ... }`
+  - 使用 Tailwind CSS 进行美观排版。
+  - 使用 `@/lib/api` 中的 `api` 实例进行请求。请求路径为 `/plugins{route_path}/...`。
+
+示例：
+```tsx
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+
+export default function MyTool() {
+  return (
+    <div className="p-6 bg-white rounded-xl shadow-sm border border-slate-200">
+      <h2 className="text-xl font-bold">我的工具界面</h2>
+    </div>
+  );
+}
+```
+
+## 3. 注意事项
+- 不要在全局 `main.py` 或 `App.tsx` 中手动注册，系统会自动扫描 `plugins/` 目录和通过 `React.lazy` 动态加载。

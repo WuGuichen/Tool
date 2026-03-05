@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  web-toolbox:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-toolbox
+    ports:
+      - "8000:8000"
+    volumes:
+      # 挂载本地 sqlite 数据库文件到绿联 NAS 的数据目录，确保数据持久化
+      - ./data/toolbox.db:/app/backend/toolbox.db
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./toolbox.db
+      - SECRET_KEY=your_super_secret_key_here
